@@ -9,13 +9,12 @@ class Home extends Component {
     render() {
         return (
             <div>
-                <AppNavbar />
                 <Container fluid>
                     <Button className='m-5 nav bg-light'>
                         <Link 
-                            to='/inventories'
+                            to='/books'
                             className='nav-link'
-                        >Manage Inventory List</Link>
+                        >Add Book</Link>
                     </Button>
                 </Container>
             </div>
