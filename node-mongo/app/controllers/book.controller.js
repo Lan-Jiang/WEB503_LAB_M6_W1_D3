@@ -1,17 +1,16 @@
 const mongoose = require('mongoose');
 mongoose.set('useFindAndModify', false);
 // mongoose.connect(CONNECTION_URL).then(()=>{console.log('...')});
-const Inventory = mongoose.model('Inventory');
+const Book = mongoose.model('Book');
 
-exports.createInventory = (req, res) => {
-    const inventory = new Inventory({
-        prodname: req.body.prodname,
-        qty: req.body.qty,
-        price: req.body.price,
-        status: req.body.status,
-    });
-    // Save a Inventory in the MongoDB
-    inventory.save().then(data=>{
+exports.createBook = (req, res) => {
+    const book = new Book({
+        id: req.body.id,
+        title: req.body.title,
+        author: req.body.author
+        });
+    // Save a Book in the MongoDB
+    book.save().then(data=>{
         res.status(200).json(data);
     }).catch(err => {
         res.status(500).json({
@@ -21,28 +20,28 @@ exports.createInventory = (req, res) => {
     });
 };
 
-exports.getInventory = (req, res) => {
-    Inventory.findById(req.param.id).select('-__v')
+exports.getBook = (req, res) => {
+    Book.findById(req.param.id).select('-__v')
         .then(inventory => {
             res.status(200).json(inventory);
         }).catch(err => {
             if(err.kind === 'ObjectId') {
                 return res.status(404).send({
-                    message: "Inventory not found with id " + req.param.id,
+                    message: "Book not found with id " + req.param.id,
                     error: err 
                 });
             }
             return res.status(500).send({
-                message: "Error retrieving Inventory with id " + req.params.id,
+                message: "Error retrieving Book with id " + req.params.id,
                 error:err
             });
         });
 };
 
 
-exports.inventories = (req, res) => {
-    Inventory.find().select('-__v').then(inventoryInfos => {
-        res.status(200).json(inventoryInfos);
+exports.books = (req, res) => {
+    Book.find().select('-__v').then(bookInfos => {
+        res.status(200).json(bookInfos);
     }).catch(error => {
         // log on console
         console.log(error);
@@ -55,47 +54,46 @@ exports.inventories = (req, res) => {
 };
 
 
-exports.deleteInventory = (req, res) => {
-    Inventory.findByIdAndRemove(req.param.id).select('-__v-_id')
-        .then(inventory => {
-            if(!inventory) {
+exports.deleteBook = (req, res) => {
+    Book.findByIdAndRemove(req.param.id).select('-__v-_id')
+        .then(book => {
+            if(!book) {
                 res.status(404).json({
-                    message: "No inventory found with id = " + req.params.id,
+                    message: "No book found with id = " + req.params.id,
                     error: "404"
                 })
             }
             res.status(200).json({});
         }).catch(err => {
             return res.status(500).send({
-                message: "Error -> Can't delete inventory with id = " + req.params.id,
+                message: "Error -> Can't delete book with id = " + req.params.id,
                 error: err.message
             })
         })
 };
 
-exports.updateInventory = (req, res) => {
+exports.updateBook = (req, res) => {
     //Find inventory an update it
-    Inventory.findByIdAndUpdate(
+    Book.findByIdAndUpdate(
         req.body._id,
         {
-            prodname: req.body.prodname,
-            qty: req.body.qty,
-            price: req.body.price,
-            status: req.body.status
+            id: req.body.id,
+            title: req.body.title,
+            author: req.body.author
         },
         {new: false}
     ).select('-__v')
-        .then(inventory => {
-            if(!inventory) {
+        .then(book => {
+            if(!book) {
                 return res.status(404).send({
-                    message: "Error -> Can't update an inventory with id = " + req.params.id,
+                    message: "Error -> Can't update an book with id = " + req.params.id,
                     error: "Not Found!"
                 })
             }
-            res.status(200).json(inventory);
+            res.status(200).json(book);
         }).catch(err => {
             return res.status(500).send({
-                message: "Error => Can't update a inventory with id = " + req.params.id,
+                message: "Error => Can't update a book with id = " + req.params.id,
                 error: err.message
             })
         })
